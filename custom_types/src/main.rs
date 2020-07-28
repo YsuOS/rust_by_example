@@ -36,7 +36,7 @@ fn main() {
 
     let Point { x: top_edge, y: left_edge } = point;
 
-    let rectangle = Rectangle {
+    let _rectangle = Rectangle {
         top_left: Point { x: top_edge, y: left_edge },
         bottom_right: bottom_right,
     };
@@ -79,4 +79,169 @@ fn main() {
         square.top_left,
         square.bottom_right
     );
+
+
+    enum WebEvent {
+        PageLoad,
+        PageUnload,
+        KeyPress(char),
+        Paste(String),
+        Click { x: i64, y: i64 },
+    }
+
+    fn inspect(event: WebEvent) {
+        match event {
+            WebEvent::PageLoad => println!("page loaded"),
+            WebEvent::PageUnload => println!("page unloaded"),
+            WebEvent::KeyPress(c) => println!("press '{}'.", c),
+            WebEvent::Paste(s) => println!("pasted \"{}\".", s),
+            WebEvent::Click {x, y} => {
+                println!("clicked at x={}, y={}.", x, y);
+            },
+        }
+    }
+
+    let pressed = WebEvent::KeyPress('x');
+    let pasted = WebEvent::Paste("my text".to_owned());
+    let click = WebEvent::Click { x: 20, y: 80 };
+    let load = WebEvent::PageLoad;
+    let unload = WebEvent::PageUnload;
+
+    inspect(pressed);
+    inspect(pasted);
+    inspect(click);
+    inspect(load);
+    inspect(unload);
+
+    enum VeryVerboseEnumOfThingsToDoWithNumbers {
+        Add,
+        Subtract,
+    }
+
+    type Operations = VeryVerboseEnumOfThingsToDoWithNumbers;
+
+    fn main() {
+        let x = Operations::Add;
+    }
+
+    impl VeryVerboseEnumOfThingsToDoWithNumbers {
+        fn run(&self, x: i32, y: i32) -> i32 {
+            match self {
+                Self::Add => x + y,
+                Self::Subtract => x - y,
+            }
+        }
+    }
+
+    enum Status {
+        Rich,
+        Poor,
+    }
+
+    enum Work {
+        Civilian,
+        Soldier,
+    }
+
+
+    use Status::{Poor, Rich};
+    use Work::*;
+
+    let status = Poor;
+    let work = Civilian;
+
+    match status {
+        Rich => println!("The rich have lots of money!"),
+        Poor => println!("The poor have no money..."),
+    }
+
+    match work {
+        Civilian => println!("Civilian work!"),
+        Soldier => println!("Soldier fight!"),
+    }
+
+    enum Number {
+        Zero,
+        One,
+        Two,
+    }
+
+    enum Color {
+        Red = 0xff0000,
+        Green = 0x00ff00,
+        Blue = 0x0000ff,
+    }
+
+    println!("zero is {}", Number::Zero as i32);
+    println!("one is {}", Number::One as i32);
+
+    println!("roses are #{:06x}", Color::Red as i32);
+    println!("violets are #{:06x}", Color::Blue as i32);
+
+    use List::*;
+
+    enum List {
+        // Cons: Tuple struct that wraps an element and a pointer to the next node
+        Cons(u32, Box<List>),
+        Nil,
+    }
+
+    impl List {
+        fn new() -> List {
+            Nil
+        }
+
+        fn prepend(self, elem: u32) -> List {
+            Cons(elem, Box::new(self))
+        }
+
+        // & means reference, * means dereference
+        fn len(&self) -> u32 {
+            // `self` has type `&List`, and `*self` has type `List`, matching on a
+            // concrete type `T` is preferred over a match on a reference `&T`
+            match *self {
+            // Can't take ownership of the tail, because `self` is borrowed;
+            // instead take a reference to the tail
+                Cons(_, ref tail) => 1 + tail.len(),
+                Nil => 0
+            }
+        }
+
+        // Return representation of the list as a (heap allocated) string
+        fn stringify(&self) -> String {
+            match *self {
+                Cons(head, ref tail) => {
+                    format!("{}, {}", head, tail.stringify())
+                },
+
+                Nil => {
+                    format!("Nil")
+                },
+            }
+        }
+    }
+
+    let mut list = List::new();
+
+    list = list.prepend(1);
+    list = list.prepend(2);
+    list = list.prepend(3);
+
+    println!("linked list has length: {}", list.len());
+    println!("{}", list.stringify());
+
+    static LANGUAGE: &str = "Rust";
+    const THRESHOLD: i32 = 10;
+
+    fn is_big(n: i32) -> bool {
+        n > THRESHOLD
+    }
+
+    let n = 16;
+
+    println!("This is {}", LANGUAGE);
+    println!("The threshold si {}", THRESHOLD);
+    println!("{} is {}", n, if is_big(n) { "big" } else { "small" });
+
+    // THRESHOLD = 5;
 }
