@@ -376,8 +376,9 @@ fn main() {
         let lifetime_num = 9;
         let coerced_static = coerce_static(&lifetime_num);
 
-        println!("NUM: {} stays accessible!", NUM);
+        println!("coerced_static : {}", coerced_static);
     }
+    println!("NUM: {} stays accessible!", NUM);
 
     let x = 3;
     elided_input(&x);

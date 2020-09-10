@@ -145,17 +145,20 @@ fn main() {
 
     let color = String::from("green");
 
+    // A closure to print `color` which immediately borrows `color`
     let print = || println!("`color`: {}", color);
 
     print();
+    // `color` is borrowed immutably again. (reference)
     let _reborrow = &color;
     print();
 
+    // moved `color` to `_color_moved`
     let _color_moved = color;
-    //print();
 
     let mut count = 0;
 
+    // A closure to increment `count` as  `&mut count` because it is less restrictive 
     let mut inc = || {
         count += 1;
         println!("`count`: {}", count);
@@ -163,23 +166,29 @@ fn main() {
 
     inc();
 
+    // The closure still mutably borrows `count`
     //let _reborrow = &count;
     inc();
 
     let _count_reborrowed = &mut count;
     //inc();
 
+    // Box is a non-copy type
     let movable = Box::new(3);
 
+    // mem::drop requires T so A copy type would copy into the closure leaving
+    // the original untouched
     let consume = || {
         println!("`movable`: {:?}", movable);
         mem::drop(movable);
     };
 
+    // movable moved into consume.
     consume();
     //consume();
 
     let haystack = vec![1, 2, 3];
+
     // move before vertical pipes forces closure to take ownership of captured variables
     let contains = move |needle| haystack.contains(needle);
 
